@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>こども万博 お仕事体験アンケート</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: linear-gradient(135deg, #ffcc00 0%, #ff8800 100%);
+            min-height: 100vh;
+        }
+
+        .pop-card {
+            border: 4px solid #222;
+            box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.2);
+        }
+
+        .section-title {
+            background: linear-gradient(90deg, #ff6b6b, #ff8800);
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        /* 星評価のスタイル修正 */
+        .star-rating {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .star {
+            font-size: 2.5rem;
+            color: #ddd;
+            /* 未選択はグレー */
+            transition: color 0.2s, transform 0.1s;
+        }
+
+        .star.active {
+            color: #ffcc00;
+            /* 選択済みは黄色 */
+            text-shadow: 2px 2px 0px #000;
+            /* ポップな縁取り */
+        }
+
+        .star:active {
+            transform: scale(0.9);
+        }
+    </style>
+</head>
+
+<body class="p-4 flex items-center justify-center">
+    <div id="app" class="bg-white w-full max-w-md rounded-[2.5rem] p-8 pop-card">
+        <div id="form-content">
+            <h1 class="text-3xl font-black text-center mb-6 text-orange-600">お仕事体験アンケート</h1>
+
+            <!-- お仕事選択 -->
+            <div class="mb-6">
+                <label class="block text-sm font-bold mb-2">おしごと体験を選んでください</label>
+                <select id="job" class="w-full border-4 border-black rounded-xl p-3 font-bold appearance-none bg-white">
+                    <option value="">えらんでね</option>
+                    
+                </select>
+            </div>
+
+            <!-- 学年選択 -->
+            <div class="mb-6">
+                <label class="block text-sm font-bold mb-2">学年</label>
+                <select id="grade"
+                    class="w-full border-4 border-black rounded-xl p-3 font-bold appearance-none bg-white">
+                    <option value="">えらんでね</option>
+                    <option value="未就学児">未就学児</option>
+                    <option value="小学1年生">小学1年生</option>
+                    <option value="小学2年生">小学2年生</option>
+                    <option value="小学3年生">小学3年生</option>
+                    <option value="小学4年生">小学4年生</option>
+                    <option value="小学5年生">小学5年生</option>
+                    <option value="小学6年生">小学6年生</option>
+                    <option value="中学生">中学生</option>
+                    <option value="高校生">高校生</option>
+                </select>
+            </div>
+
+            <!-- こども向けアンケート -->
+            <div class="section-title">こども向けアンケート</div>
+
+            <!-- Q1: どのくらい楽しかったですか？ -->
+            <div class="mb-6">
+                <label class="block text-sm font-bold mb-3">どのくらい楽しかったですか？</label>
+                <div class="star-rating" id="childSatisfaction" data-value="0">
+                    <span class="star" onclick="setRating('childSatisfaction', 1)">★</span>
+                    <span class="star" onclick="setRating('childSatisfaction', 2)">★</span>
+                    <span class="star" onclick="setRating('childSatisfaction', 3)">★</span>
+                    <span class="star" onclick="setRating('childSatisfaction', 4)">★</span>
+                    <span class="star" onclick="setRating('childSatisfaction', 5)">★</span>
+                </div>
+                <div class="text-xs text-center text-gray-500 mt-2">星をタップして選んでね（5つ=とても楽しかった）</div>
+            </div>
+
+            <!-- Q2: 他のおしごと体験をやってみたい？ -->
+            <div class="mb-6">
+                <label class="block text-sm font-bold mb-2">他の『おしごと体験』をやってみたいですか？</label>
+                <select id="wantOtherJobs"
+                    class="w-full border-4 border-black rounded-xl p-3 font-bold appearance-none bg-white">
+                    <option value="">えらんでね</option>
+                    <option value="すごくやってみたい！">すごくやってみたい！</option>
+                    <option value="やってみたい">やってみたい</option>
+                    <option value="どちらでもない">どちらでもない</option>
+                    <option value="あまりやりたくない">あまりやりたくない</option>
+                </select>
+            </div>
+
+            <!-- Q3: やってみてどんな発見がありましたか？ -->
+            <div class="mb-6">
+                <label class="block text-sm font-bold mb-2">やってみてどんな発見がありましたか？</label>
+                <textarea id="discovery" class="w-full border-4 border-black rounded-xl p-3 font-bold" rows="3"
+                    placeholder="おもったことを書いてね！"></textarea>
+            </div>
+
+            <!-- Q4: お住まいの地域 -->
+            <div class="mb-8">
+                <label class="block text-sm font-bold mb-2">お住まいの地域を教えてください</label>
+                <input type="text" id="region" class="w-full border-4 border-black rounded-xl p-3 font-bold"
+                    placeholder="例：大阪市、神戸市">
+            </div>
+
+            <!-- 保護者向けアンケート -->
+            <div class="section-title">保護者向けアンケート</div>
+
+            <!-- Q1: お子さんの変化は感じましたか？ -->
+            <div class="mb-6">
+                <label class="block text-sm font-bold mb-3">お子さんの変化は感じましたか？</label>
+                <div class="star-rating" id="parentObservedChange" data-value="0">
+                    <span class="star" onclick="setRating('parentObservedChange', 1)">★</span>
+                    <span class="star" onclick="setRating('parentObservedChange', 2)">★</span>
+                    <span class="star" onclick="setRating('parentObservedChange', 3)">★</span>
+                    <span class="star" onclick="setRating('parentObservedChange', 4)">★</span>
+                    <span class="star" onclick="setRating('parentObservedChange', 5)">★</span>
+                </div>
+                <div class="text-xs text-center text-gray-500 mt-2">星をタップして選んでください（5つ=大きく感じた）</div>
+            </div>
+
+            <!-- Q2: お子さんに体験させてみてよかったと感じますか？ -->
+            <div class="mb-6">
+                <label class="block text-sm font-bold mb-3">お子さんに体験させてみてよかったと感じますか？</label>
+                <div class="star-rating" id="parentSatisfaction" data-value="0">
+                    <span class="star" onclick="setRating('parentSatisfaction', 1)">★</span>
+                    <span class="star" onclick="setRating('parentSatisfaction', 2)">★</span>
+                    <span class="star" onclick="setRating('parentSatisfaction', 3)">★</span>
+                    <span class="star" onclick="setRating('parentSatisfaction', 4)">★</span>
+                    <span class="star" onclick="setRating('parentSatisfaction', 5)">★</span>
+                </div>
+                <div class="text-xs text-center text-gray-500 mt-2">星をタップして選んでください（5つ=とてもよかった）</div>
+            </div>
+
+            <!-- Q3: 保護者様の率直な感想 -->
+            <div class="mb-6">
+                <label
+                    class="block text-sm font-bold mb-2">今回の体験について保護者様の率直な感想をいただきたいです。<br>次回の改善やブラッシュアップにも活用させていただきます。</label>
+                <textarea id="parentFeedback" class="w-full border-4 border-black rounded-xl p-3" rows="4"
+                    placeholder="ご自由にお書きください"></textarea>
+            </div>
+
+            <!-- Q4: 体験してほしいコンテンツ -->
+            <div class="mb-8">
+                <label class="block text-sm font-bold mb-2">お子さまに体験してほしいコンテンツがあれば教えてください</label>
+                <textarea id="desiredContent" class="w-full border-4 border-black rounded-xl p-3" rows="3"
+                    placeholder="例：プログラミング、料理体験、など"></textarea>
+            </div>
+
+            <button id="submitBtn"
+                class="w-full bg-pink-500 text-white font-black py-4 rounded-full border-4 border-black shadow-[4px_4px_0px_#000] active:translate-y-1 active:shadow-none transition-all text-xl">
+                送信する！
+            </button>
+        </div>
+
+        <div id="success-content" class="hidden text-center">
+            <div class="text-6xl mb-4">🎉</div>
+            <h2 class="text-2xl font-black mb-4">送信完了！</h2>
+            <p class="font-bold text-gray-600 mb-6">アンケートのご協力<br>ありがとうございました！<br><br>LINEメッセージで認定証を送りました！</p>
+            <button onclick="liff.closeWindow()"
+                class="w-full bg-blue-500 text-white font-bold py-3 rounded-full border-4 border-black">
+                とじる
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 設定項目
+        const LIFF_ID = "2009517979-yOILFdOe";
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbw0ihGuOpYhSSN_N1cwj9uo5Wtzc2zHJfio3geXWYHWh8Ft7mS0Dzf682XSGMTZL1ow5Q/exec";
+
+        // 星評価の制御
+        function setRating(id, value) {
+            const container = document.getElementById(id);
+            container.setAttribute('data-value', value);
+
+            const stars = container.getElementsByClassName('star');
+            for (let i = 0; i < stars.length; i++) {
+                if (i < value) {
+                    stars[i].classList.add('active');
+                } else {
+                    stars[i].classList.remove('active');
+                }
+            }
+        }
+
+       async function initLIFF() {
+      try {
+          await liff.init({ liffId: LIFF_ID });
+          if (!liff.isLoggedIn()) {
+              if (!liff.isInClient()) {
+                  // 外部ブラウザの場合のみログインリダイレクト
+                  liff.login();
+              }
+              // LINEアプリ内なら自動認証済みのはずなので何もしない     
+          }
+      } catch (error) {
+          console.error("LIFF初期化エラー", error);
+      }
+  }
+
+        document.getElementById('submitBtn').addEventListener('click', async () => {
+            const job = document.getElementById('job').value;
+            const grade = document.getElementById('grade').value;
+            // 星の値を取得
+            const childSatisfaction = document.getElementById('childSatisfaction').getAttribute('data-value');
+            const wantOtherJobs = document.getElementById('wantOtherJobs').value;
+            const discovery = document.getElementById('discovery').value.trim();
+            const region = document.getElementById('region').value.trim();
+            // 星の値を取得
+            const parentObservedChange = document.getElementById('parentObservedChange').getAttribute('data-value');
+            const parentSatisfaction = document.getElementById('parentSatisfaction').getAttribute('data-value');
+            const parentFeedback = document.getElementById('parentFeedback').value.trim();
+            const desiredContent = document.getElementById('desiredContent').value.trim();
+
+            // バリデーション
+            if (!job) { alert("おしごと体験を選んでください！"); return; }
+            if (!grade) { alert("学年を選んでください！"); return; }
+            if (childSatisfaction == "0") { alert("「どのくらい楽しかったですか？」の星を選んでください！"); return; }
+            if (!wantOtherJobs) { alert("「他のおしごと体験をやってみたいですか？」を選んでください！"); return; }
+            if (!discovery) { alert("「やってみてどんな発見がありましたか？」を入力してください！"); return; }
+            if (!region) { alert("お住まいの地域を入力してください！"); return; }
+            if (parentObservedChange == "0") { alert("「お子さんの変化は感じましたか？」の星を選んでください！"); return; }
+            if (parentSatisfaction == "0") { alert("「お子さんに体験させてみてよかったと感じますか？」の星を選んでください！"); return; }
+            if (!parentFeedback) { alert("保護者様の率直な感想を入力してください！"); return; }
+
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerText = "送信中...";
+
+            try {
+                let profile;
+                try {
+                    profile = await liff.getProfile();
+                } catch (e) {
+                    // プロフィール取得エラー（権限不足など）の場合
+                    console.warn("Profile get error, trying consistency check...", e);
+                    // エラーが "The permission is not in LIFF app scope" なら
+                    // 一度ログアウトさせて、権限の再取得（同意画面）を強制する
+                    if (!liff.isLoggedIn()) {
+                        liff.login();
+                        return;
+                    }
+                    // ログイン済みだが権限エラーが出る -> キャッシュがおかしい -> ログアウトしてリロード
+                    liff.logout();
+                    alert("権限情報の更新が必要です。\nOKを押すとリロードしますので、再度ログインと「許可」をお願いします。");
+                    location.reload();
+                    return;
+                }
+
+                // no-corsモードで送信
+                // レスポンスは不透明だけど、送信は成功するはず
+                await fetch(GAS_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' }, // プリフライト回避
+                    body: JSON.stringify({
+                        userId: profile.userId,
+                        name: profile.displayName, // 名前も送っておく
+                        job: job,
+                        grade: grade,
+                        childSatisfaction: childSatisfaction,
+                        wantOtherJobs: wantOtherJobs,
+                        discovery: discovery,
+                        region: region,
+                        parentObservedChange: parentObservedChange,
+                        parentSatisfaction: parentSatisfaction,
+                        parentFeedback: parentFeedback,
+                        desiredContent: desiredContent
+                    })
+                });
+
+                // no-corsの場合はエラーキャッチできないことがあるが、
+                // 送信処理が終わればここに来る
+                document.getElementById('form-content').classList.add('hidden');
+                document.getElementById('success-content').classList.remove('hidden');
+
+            } catch (error) {
+                alert("送信エラー: " + error.message + "\nGASのURLやデプロイ設定を確認してね。");
+                console.error(error);
+                btn.disabled = false;
+                btn.innerText = "送信する！";
+            }
+        });
+
+        initLIFF();
+    </script>
+</body>
+
+</html>
