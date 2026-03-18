@@ -232,6 +232,14 @@
               }
               // LINEアプリ内なら自動認証済みのはずなので何もしない     
           }
+          // 名前を自動入力（便利機能）
+          const profile = await liff.getProfile();
+          if (profile && profile.displayName) {
+              const nameInput = document.getElementById('childName');
+              if (nameInput && !nameInput.value) {
+                  nameInput.value = profile.displayName;
+              }
+          }
       } catch (error) {
           console.error("LIFF初期化エラー", error);
       }
