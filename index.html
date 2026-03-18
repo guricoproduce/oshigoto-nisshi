@@ -68,6 +68,7 @@
                 <label class="block text-sm font-bold mb-2">おしごと体験を選んでください</label>
                 <select id="job" class="w-full border-4 border-black rounded-xl p-3 font-bold appearance-none bg-white">
                     <option value="">えらんでね</option>
+                    <option value="デザイナー体験">デザイナー体験</option>
                     
                 </select>
             </div>
@@ -265,6 +266,60 @@
                 } catch (e) {
                     // プロフィール取得エラー（権限不足など）の場合
                     console.warn("Profile get error, trying consistency check...", e);
+                    // エラーが "The permission is not in LIFF app scope" なら
+                    // 一度ログアウトさせて、権限の再取得（同意画面）を強制する
+                    if (!liff.isLoggedIn()) {
+                        liff.login();
+                        return;
+                    }
+                    // ログイン済みだが権限エラーが出る -> キャッシュがおかしい -> ログアウトしてリロード
+                    liff.logout();
+                    alert("権限情報の更新が必要です。\nOKを押すとリロードしますので、再度ログインと「許可」をお願いします。");
+                    location.reload();
+                    return;
+                }
+
+                // no-corsモードで送信
+                // レスポンスは不透明だけど、送信は成功するはず
+                await fetch(GAS_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' }, // プリフライト回避
+                    body: JSON.stringify({
+                        userId: profile.userId,
+                        name: profile.displayName, // 名前も送っておく
+                        job: job,
+                        grade: grade,
+                        childSatisfaction: childSatisfaction,
+                        wantOtherJobs: wantOtherJobs,
+                        discovery: discovery,
+                        region: region,
+                        parentObservedChange: parentObservedChange,
+                        parentSatisfaction: parentSatisfaction,
+                        parentFeedback: parentFeedback,
+                        desiredContent: desiredContent
+                    })
+                });
+
+                // no-corsの場合はエラーキャッチできないことがあるが、
+                // 送信処理が終わればここに来る
+                document.getElementById('form-content').classList.add('hidden');
+                document.getElementById('success-content').classList.remove('hidden');
+
+            } catch (error) {
+                alert("送信エラー: " + error.message + "\nGASのURLやデプロイ設定を確認してね。");
+                console.error(error);
+                btn.disabled = false;
+                btn.innerText = "送信する！";
+            }
+        });
+
+        initLIFF();
+    </script>
+</body>
+
+</html>
+trying consistency check...", e);
                     // エラーが "The permission is not in LIFF app scope" なら
                     // 一度ログアウトさせて、権限の再取得（同意画面）を強制する
                     if (!liff.isLoggedIn()) {
