@@ -63,6 +63,13 @@
         <div id="form-content">
             <h1 class="text-3xl font-black text-center mb-6 text-orange-600">お仕事体験アンケート</h1>
 
+            <!-- お名前 -->
+            <div class="mb-6">
+                <label class="block text-sm font-bold mb-2">おなまえ</label>
+                <input type="text" id="childName" class="w-full border-4 border-black rounded-xl p-3 font-bold"
+                    placeholder="おなまえを教えてね！">
+            </div>
+
             <!-- お仕事選択 -->
             <div class="mb-6">
                 <label class="block text-sm font-bold mb-2">おしごと体験を選んでください</label>
@@ -231,6 +238,7 @@
   }
 
         document.getElementById('submitBtn').addEventListener('click', async () => {
+            const childNameInput = document.getElementById('childName').value.trim();
             const job = document.getElementById('job').value;
             const grade = document.getElementById('grade').value;
             // 星の値を取得
@@ -245,6 +253,7 @@
             const desiredContent = document.getElementById('desiredContent').value.trim();
 
             // バリデーション
+            if (!childNameInput) { alert("おなまえを教えてね！"); return; }
             if (!job) { alert("おしごと体験を選んでください！"); return; }
             if (!grade) { alert("学年を選んでください！"); return; }
             if (childSatisfaction == "0") { alert("「どのくらい楽しかったですか？」の星を選んでください！"); return; }
@@ -287,7 +296,7 @@
                     headers: { 'Content-Type': 'text/plain' }, // プリフライト回避
                     body: JSON.stringify({
                         userId: profile.userId,
-                        name: profile.displayName, // 名前も送っておく
+                        childName: childNameInput,
                         job: job,
                         grade: grade,
                         childSatisfaction: childSatisfaction,
