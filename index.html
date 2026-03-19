@@ -65,7 +65,7 @@
 
             <!-- お名前 -->
             <div class="mb-6">
-                <label class="block text-sm font-bold mb-2">おなまえ</label>
+                <label class="block text-sm font-bold mb-2">お子さまのおなまえ</label>
                 <input type="text" id="childName" class="w-full border-4 border-black rounded-xl p-3 font-bold"
                     placeholder="おなまえを教えてね！">
             </div>
@@ -76,7 +76,8 @@
                 <select id="job" class="w-full border-4 border-black rounded-xl p-3 font-bold appearance-none bg-white">
                     <option value="">えらんでね</option>
                     <option value="デザイナー体験">デザイナー体験</option>
-                    
+                    <option value="バーチャル消防士体験">バーチャル消防士体験</option>
+                    <option value="コミュニケーション探検家体験">コミュニケーション探検家体験</option>
                 </select>
             </div>
 
@@ -231,14 +232,6 @@
                   liff.login();
               }
               // LINEアプリ内なら自動認証済みのはずなので何もしない     
-          }
-          // 名前を自動入力（便利機能）
-          const profile = await liff.getProfile();
-          if (profile && profile.displayName) {
-              const nameInput = document.getElementById('childName');
-              if (nameInput && !nameInput.value) {
-                  nameInput.value = profile.displayName;
-              }
           }
       } catch (error) {
           console.error("LIFF初期化エラー", error);
